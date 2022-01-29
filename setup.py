@@ -11,7 +11,6 @@ setup(
  install_requires = [
    'numpy>=1.15.0',
    'scipy>=1.7.2',
-   'sklearn',
    # 'h5py>=2.8.0',
    'matplotlib>=3.0.0',
    'pyDOE2>=1.3.0'
