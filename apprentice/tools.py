@@ -60,7 +60,7 @@ def denomChangesSignMS(rapp, multistart=10):
     else:   return False, xmin, xmax
 
 
-def calcApprox(X, Y, order, pnames, mode= "sip", onbtol=-1, debug=False, testforPoles=100, ftol=1e-9, itslsqp=200, solver="ipopt", abstractmodel=None, tmpdir="/tmp"):
+def calcApprox(X, Y, order, pnames, mode= "sip", debug=False, testforPoles=100, ftol=1e-9, itslsqp=200, solver="ipopt", abstractmodel=None, tmpdir="/tmp"):
     M, N = order
     import apprentice as app
     if N==0:
@@ -68,7 +68,6 @@ def calcApprox(X, Y, order, pnames, mode= "sip", onbtol=-1, debug=False, testfor
         hasPole=False
     else:
         if mode == "la":    _app = app.RationalApproximation(X, Y, order=(M,N), pnames=pnames, strategy=2)
-        elif mode == "onb": _app = app.RationalApproximationONB(X, Y, order=(M,N), pnames=pnames, tol=onbtol, debug=debug)
         elif mode == "sip":
             try:
                 _app = app.RationalApproximationSLSQP(X, Y, order=(M,N), pnames=pnames, debug=debug, ftol=ftol, itslsqp=itslsqp, solver=solver, abstractmodel=abstractmodel,tmpdir=tmpdir)
@@ -89,7 +88,7 @@ def calcApprox(X, Y, order, pnames, mode= "sip", onbtol=-1, debug=False, testfor
                     print("Exception:", e)
                     return None, True
         else:
-            raise Exception("Specified mode {} does not exist, choose la|onb|sip".format(mode))
+            raise Exception("Specified mode {} does not exist, choose la|sip|lasip".format(mode))
         hasPole = denomChangesSignMS(_app, testforPoles)[0]
 
     return _app, hasPole
