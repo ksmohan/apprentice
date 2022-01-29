@@ -7,7 +7,7 @@ from monomial import recurrence1D
 from monomial import recurrence
 from monomial import vandermonde
 
-class TestMonoNextGrlex(unittest.TestCase):
+class TestMonomial(unittest.TestCase):
     """
     Test the monomial grlex function
     """
