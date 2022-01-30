@@ -14,7 +14,6 @@ setup(
    'sklearn',
    # 'h5py>=2.8.0',
    'matplotlib>=3.0.0',
-   'pyDOE2>=1.3.0'
    # 'GPy>=1.9.9'
    # 'mpi4py>=3.0.0',
  ],

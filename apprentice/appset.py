@@ -507,10 +507,12 @@ class TuningObjective2(object):
         if   method == "uniform":
             _PP = np.random.uniform(low=self._bounds[self._freeIdx][:,0], high=self._bounds[self._freeIdx][:,1], size=(ntrials, len(self._freeIdx[0])))
         elif method == "lhs":
-            import pyDOE2
+            from scipy.stats import qmc
+            sampler = qmc.LatinHypercube(ndim, seed)
+            sample = sampler.random(n=max(ntrials,2))
             a = self._bounds[self._freeIdx][:,0]
             b = self._bounds[self._freeIdx][:,1]
-            _PP = a + (b-a) * pyDOE2.lhs(len(self._freeIdx[0]), samples=max(ntrials,2), criterion="maximin")
+            _PP = qmc.scale(sample, a, b)
         else:
             raise Exception("Startpoint sampling method {} not known, exiting".format(method))
 
