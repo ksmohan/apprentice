@@ -1,6 +1,6 @@
 class Approximation(object):
 
     def __init__(self):
-        pass
+        raise Exception("Dont use me. Use SurrogateModdel instead")
 
 
