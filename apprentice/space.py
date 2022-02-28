@@ -9,7 +9,7 @@ class Space(object):
         self.pnames_ = pnames
         self.sa_ = np.array(-1*np.ones(dim)) if sa is None else np.array(sa)
         self.sb_ = np.array(np.ones(dim)) if sb is None else np.array(sb)
-        self.scaleTerm_ = (self.sb_ - self.sa_)/(self.a_ - self.b_)
+        self.scaleTerm_ = (self.sb_ - self.sa_)/(self.b_ - self.a_)
         self.jacfac_ = (self.box_scaled[:,1] - self.box_scaled[:,0])/(self.box[:,1] - self.box[:,0])
 
     @classmethod
@@ -29,12 +29,6 @@ class Space(object):
         The scaled world box
         """
         return np.column_stack((self.sa_, self.sb_))
-
-    def draw_samples(self, nsamples):
-        return np.random.uniform(low=self.a_, high=self.b_,size=(nsamples,self.dim))
-
-    def draw_samples_scaled(self, nsamples):
-        return np.random.uniform(low=self.sa_, high=self.sb_,size=(nsamples,self.dim))
 
     @property
     def dim(self): return self.dim_

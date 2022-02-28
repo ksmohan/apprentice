@@ -1,6 +1,8 @@
 import unittest
 import numpy as np
 import pprint
+
+import apprentice
 from polynomialapproximation import PolynomialApproximation
 
 class TestPolynomialApproximation(unittest.TestCase):
@@ -104,12 +106,16 @@ class TestPolynomialApproximation(unittest.TestCase):
                                                               strategy=1)
         exp_grad = [4.,4.]
         grad = P.gradient([1,1])
-        #TODO Test Fails. Look into this
         assert(np.all(np.isclose(grad, exp_grad)))
 
     def test_hessian(self):
-        #TODO Test Fails. Look into this
-        assert(False)
+        (X,Y) = TestPolynomialApproximation.get_data(scaled=True)
+        P = PolynomialApproximation.from_interpolation_points(X,Y,
+                                                              m=2,
+                                                              strategy=1)
+        exp_hess = [[2.,2.],[2.,2.]]
+        hess = P.hessian([1,1])
+        assert(np.all(np.isclose(hess, exp_hess)))
 
     def test_coeff_norm(self):
         P = TestPolynomialApproximation.get_pa_fit_s1_unscaled()
@@ -121,22 +127,29 @@ class TestPolynomialApproximation(unittest.TestCase):
         assert (np.isclose(P.coeff2_norm, np.sqrt(6.)))
 
     def test_f_x(self):
-        (X,Y) = TestPolynomialApproximation.get_data(scaled=True)
-        # pprint.pp(X)
-        # pprint.pp(Y)
-        P = PolynomialApproximation.from_interpolation_points(X,Y,
+        (X,Y) = TestPolynomialApproximation.get_data(scaled=False)
+        Pusc = PolynomialApproximation.from_interpolation_points(X,Y,
                                                               m=2,
                                                               strategy=1)
-        # print(P([1.,1.]))
-        expected_value=4
-        #TODO Test Fails. Look into this
-        assert (np.isclose(P([1.,1.]), expected_value))
+        (X,Y) = TestPolynomialApproximation.get_data(scaled=True)
+        Psc = PolynomialApproximation.from_interpolation_points(X,Y,
+                                                              m=2,
+                                                              strategy=1)
+        x = [0.5,25]
+        expected_value_sc=650.25
+        expected_value_usc=0.25902139952
+        assert (np.isclose(Pusc(x), expected_value_usc) and np.isclose(Psc(x), expected_value_sc))
 
 
 
     def test_f_X(self):
-        #TODO Test Fails. Look into this
-        assert(False)
+        (X,Y) = TestPolynomialApproximation.get_data(scaled=True)
+        Psc = PolynomialApproximation.from_interpolation_points(X,Y,
+                                                                m=2,
+                                                                strategy=1)
+        X = [[0.5,20],[0.5,25]]
+        expected_value_sc=[420.25,650.25]
+        assert(np.all(np.isclose(Psc.f_X(X), expected_value_sc)))
 
 if __name__ == "__main__":
     unittest.main()

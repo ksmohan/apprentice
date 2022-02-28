@@ -24,14 +24,14 @@ def timeit(method):
 
 class PolynomialApproximation(SurrogateModel):
     __allowed = ("m_", "m", "pcoeff_", "training_size_", "pnames_","pnames_",
-                 "compute_cov_","strategy_","strategy",'cov_')
+                 "compute_cov_","strategy_","strategy",'cov_','scale_min','scale_max')
 
     def __init__(self, dim, fnspace=None, **kwargs: dict):
         super().__init__(dim, fnspace)
         for k, v in kwargs.items():
             if k == 'm': k = 'm_'
             elif k == 'strategy': k='strategy_'
-            elif k == 'pnames': continue
+            elif k in ['pnames','scale_min','scale_max']: continue
             assert (k in self.__class__.__allowed)
             setattr(self,k, v)
 
@@ -178,7 +178,7 @@ class PolynomialApproximation(SurrogateModel):
         """
         XS = self.fnspace.scale(X)
         if self.dim > 1:
-            zz = np.ones((len(XS), *self.struct_p_.shape))
+            zz = np.ones((*self.struct_p_.shape, len(XS)))
             np.power(XS, self.struct_p_[:, np.newaxis], out=(zz),
                      where=self.struct_p_[:, np.newaxis] > 0)
             rec_p = np.prod(zz, axis=2)
@@ -285,7 +285,7 @@ class PolynomialApproximation(SurrogateModel):
         X = self.function_space.scale(np.array(X))
         S = self.struct_p_
 
-        HH = np.ones((self.dim, self.dim, len(S)), dtype=np.float)
+        HH = np.ones((self.dim, self.dim, len(S)), dtype=np.float64)
         EE = np.full((self.dim, self.dim, len(S), self.dim), S, dtype=np.int32)
 
         for numx in range(self.dim):
@@ -307,7 +307,7 @@ class PolynomialApproximation(SurrogateModel):
             for numy in range(self.dim):
                 HH[numx][numy][NONZ[numx][numy]] *= (JF[numx] * JF[numy])
 
-        HESS = np.empty((self.dim, self.dim), dtype=np.float)
+        HESS = np.empty((self.dim, self.dim), dtype=np.float64)
         for numx in range(self.dim):
             for numy in range(self.dim):
                 if numy >= numx:
