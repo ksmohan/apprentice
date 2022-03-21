@@ -151,5 +151,21 @@ class TestPolynomialApproximation(unittest.TestCase):
         expected_value_sc=[420.25,650.25]
         assert(np.all(np.isclose(Psc.f_X(X), expected_value_sc)))
 
+    def test_set_pnames(self):
+        (X, Y) = TestPolynomialApproximation.get_data(scaled=True)
+        Psc = PolynomialApproximation.from_interpolation_points(X, Y,
+                                                                m=2,
+                                                                strategy=1,
+                                                                pnames=[
+                                                                        "dim1",
+                                                                        "dim2",
+                                                                        "dim3"
+                                                                        ]
+                                                                )
+        expected_pnames = ["dim1","dim2","dim3"]
+        given_pnames = Psc.pnames
+        assert (given_pnames==expected_pnames)
+
+
 if __name__ == "__main__":
     unittest.main()

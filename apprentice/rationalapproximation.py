@@ -18,51 +18,119 @@ def timeit(method):
     return timed
 
 class RationalApproximation(object):
-    def __init__(self, X=None, Y=None, order=(2,1), fname=None, initDict=None, strategy=1, scale_min=-1, scale_max=1, pnames=None, set_structures=True):
-        """
-        Multivariate rational approximation f(x)_mn =  g(x)_m/h(x)_n
+    __allowed = ("m_", "m", "n_", "n", "pcoeff_","qcoeff_",
+                 "training_size_", "pnames_", "strategy_", "strategy",
+                 'scale_min', 'scale_max')
 
-        kwargs:
-            fname --- to read in previously calculated Pade approximation
+    def __init__(self,dim, fnspace=None, **kwargs: dict):
+        super().__init__(dim, fnspace)
+        for k, v in kwargs.items():
+            if k == 'm': k = 'm_'
+            if k == 'n':k = 'n_'
+            elif k == 'strategy': k='strategy_'
+            elif k in ['pnames','scale_min','scale_max']: continue
+            assert (k in self.__class__.__allowed)
+            setattr(self,k, v)
 
-            X     --- anchor points
-            Y     --- function values
-            order --- tuple (m,n) m being the order of the numerator polynomial --- if omitted: auto
-        """
-        self._vmin=None
-        self._vmax=None
-        self._xmin = None
-        self._xmax = None
-        if initDict is not None:
-            self.mkFromDict(initDict, set_structures=set_structures)
-        elif fname is not None:
-            self.mkFromJSON(fname, set_structures=set_structures)
-        elif X is not None and Y is not None:
-            self._m=order[0]
-            self._n=order[1]
-            self._scaler = apprentice.Scaler(np.atleast_2d(np.array(X, dtype=np.float64)), a=scale_min, b=scale_max, pnames=pnames)
-            self._X   = self._scaler.scaledPoints
-            self._dim = self._X[0].shape[0]
-            self._Y   = np.array(Y, dtype=np.float64)
-            self._trainingsize=len(X)
-            if self._dim==1: self.recurrence=apprentice.monomial.recurrence1D
-            else           : self.recurrence=apprentice.monomial.recurrence
-            self.fit(strategy=strategy)
-        else:
-            raise Exception("Constructor not called correctly, use either fname, initDict or X and Y")
+        self.set_structures()
+
+    # def __init__(self, X=None, Y=None, order=(2,1), fname=None, initDict=None, strategy=1, scale_min=-1, scale_max=1, pnames=None, set_structures=True):
+    #     """
+    #     Multivariate rational approximation f(x)_mn =  g(x)_m/h(x)_n
+    #
+    #     kwargs:
+    #         fname --- to read in previously calculated Pade approximation
+    #
+    #         X     --- anchor points
+    #         Y     --- function values
+    #         order --- tuple (m,n) m being the order of the numerator polynomial --- if omitted: auto
+    #     """
+    #     self._vmin=None
+    #     self._vmax=None
+    #     self._xmin = None
+    #     self._xmax = None
+    #     if initDict is not None:
+    #         self.mkFromDict(initDict, set_structures=set_structures)
+    #     elif fname is not None:
+    #         self.mkFromJSON(fname, set_structures=set_structures)
+    #     elif X is not None and Y is not None:
+    #         self._m=order[0]
+    #         self._n=order[1]
+    #         self._scaler = apprentice.Scaler(np.atleast_2d(np.array(X, dtype=np.float64)), a=scale_min, b=scale_max, pnames=pnames)
+    #         self._X   = self._scaler.scaledPoints
+    #         self._dim = self._X[0].shape[0]
+    #         self._Y   = np.array(Y, dtype=np.float64)
+    #         self._trainingsize=len(X)
+    #         if self._dim==1: self.recurrence=apprentice.monomial.recurrence1D
+    #         else           : self.recurrence=apprentice.monomial.recurrence
+    #         self.fit(strategy=strategy)
+    #     else:
+    #         raise Exception("Constructor not called correctly, use either fname, initDict or X and Y")
 
     @property
-    def dim(self): return self._dim
+    def dim(self):
+        return self.fnspace.dim
+
     @property
-    def trainingsize(self): return self._trainingsize
+    def pnames(self):
+        return self.fnspace.pnames
+
+    @property
+    def order_numerator(self):
+        if hasattr(self, 'm_'):
+            return self.m_
+        return 1
+
+    @property
+    def order_denominator(self):
+        if hasattr(self, 'n_'):
+            return self.n_
+        return 1
+
+    @property
+    def fit_strategy(self):
+        strat_num_to_str = {
+            "1.1": "m/1",
+            "2.1": "m/n pole s1",
+            "2.2": "m/n pole s2",
+            "2.3": "m/n pole s3",
+            "3.1": "m/n polefree sip"
+        }
+        allowed_nums = strat_num_to_str.keys()
+        allowed_str = strat_num_to_str.values()
+        if hasattr(self, 'strategy_'):
+            if self.strategy_ in allowed_nums or self.strategy_ in allowed_str:
+                return self.strategy_
+            else:
+                raise Exception("Strategy not allowed: {}".format(self.strategy_))
+        return "3.1" # default is SIP
+
+    @property
+    def coeff_numerator(self):
+        if hasattr(self, 'pcoeff_'):
+            return self.pcoeff_
+        raise Exception("Numerator coeffecients cannot be found. Perform a fit first")
+
+    @property
+    def coeff_denominator(self):
+        if hasattr(self, 'qcoeff_'):
+            return self.qcoeff_
+        raise Exception("Denominator coeffecients cannot be found. Perform a fit first")
+
+    def set_structures(self):
+        m=self.order_numerator
+        n=self.order_denominator
+        self.struct_p_ = apprentice.monomialStructure(self.dim, m)
+        self.struct_q_ = apprentice.monomialStructure(self.dim, n)
+        from apprentice import tools
+        self.M_        = tools.numCoeffsPoly(self.dim, m)
+        self.N_        = tools.numCoeffsPoly(self.dim, n)
+        self.K_ = 1 + self._m + self._n
+
     @property
     def M(self): return self._M
     @property
     def N(self): return self._N
-    @property
-    def m(self): return self._m
-    @property
-    def n(self): return self._n
     @property
     def vmin(self): return self._vmin
     @property
@@ -72,13 +140,6 @@ class RationalApproximation(object):
     @property
     def xmax(self):return self._xmax
 
-    def setStructures(self):
-        self._struct_p = apprentice.monomialStructure(self.dim, self.m)
-        self._struct_q = apprentice.monomialStructure(self.dim, self.n)
-        from apprentice import tools
-        self._M        = tools.numCoeffsPoly(self.dim, self.m)
-        self._N        = tools.numCoeffsPoly(self.dim, self.n)
-        self._K = 1 + self._m + self._n
 
     # @timeit
     def coeffSolve(self, VM, VN):

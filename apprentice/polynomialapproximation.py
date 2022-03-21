@@ -23,7 +23,7 @@ def timeit(method):
 
 
 class PolynomialApproximation(SurrogateModel):
-    __allowed = ("m_", "m", "pcoeff_", "training_size_", "pnames_","pnames_",
+    __allowed = ("m_", "m", "pcoeff_", "training_size_", "pnames_","pnames",
                  "compute_cov_","strategy_","strategy",'cov_','scale_min','scale_max')
 
     def __init__(self, dim, fnspace=None, **kwargs: dict):
@@ -31,7 +31,7 @@ class PolynomialApproximation(SurrogateModel):
         for k, v in kwargs.items():
             if k == 'm': k = 'm_'
             elif k == 'strategy': k='strategy_'
-            elif k in ['pnames','scale_min','scale_max']: continue
+            elif k in ['pnames','pnames_''scale_min','scale_max']: continue
             assert (k in self.__class__.__allowed)
             setattr(self,k, v)
 
@@ -74,6 +74,10 @@ class PolynomialApproximation(SurrogateModel):
     @property
     def dim(self):
         return self.fnspace.dim
+
+    @property
+    def pnames(self):
+        return self.fnspace.pnames
 
     @property
     def order_numerator(self):
