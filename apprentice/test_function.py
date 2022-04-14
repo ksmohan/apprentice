@@ -35,6 +35,13 @@ class TestFunction(unittest.TestCase):
         sf = Function.from_surrogates( APPR )
         self.assertEqual(sf.dim, 2)
 
+        with self.assertRaises(Exception) as context:
+            sf([0,0])
+
+        self.assertTrue("The function objective must be implemented in the derived class" in str(context.exception))
+
+
+
 
 if __name__ == "__main__":
     unittest.main()
