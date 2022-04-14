@@ -1,18 +1,18 @@
 import unittest
-from space import Space
+from apprentice.space import Space
 
 class TestSpace(unittest.TestCase):
 
     def test_sth(self):
-        S = Space(2, [0,0], [2,3], ["parA", "parB"])
+        S = Space(2, [0,0], [2,3], pnames=["parA", "parB"])
 
     def test_mkSubSpace(self):
-        S = Space(3, [0,0,1], [2,3,4], ["parA", "parB", "parC"])
+        S = Space(3, [0,0,1], [2,3,4], pnames=["parA", "parB", "parC"])
         S2 = S.mkSubSpace([0,2])
         self.assertEqual(S2.dim,2)
 
     def test_sample(self):
-        S = Space(3, [0,0,1], [2,3,4], ["parA", "parB", "parC"])
+        S = Space(3, [0,0,1], [2,3,4], pnames=["parA", "parB", "parC"])
 
     def test_center(self):
         S = Space(3, [0,0,1], [2,3,4])

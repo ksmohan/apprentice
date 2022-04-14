@@ -90,7 +90,7 @@ class Space(object):
         """
         newdim = len(dims)
         newnames = [self.pnames[d] for d in dims] if not self.pnames is None else None
-        return Space(newdim, [self.a_[d] for d in dims], [self.b_[d] for d in dims], newnames)
+        return Space(newdim, [self.a_[d] for d in dims], [self.b_[d] for d in dims], pnames=newnames)
 
     def sample_main(self, b_min,b_max,npoints: int, method="uniform", seed=None):
         """
