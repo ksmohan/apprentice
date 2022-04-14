@@ -1,5 +1,10 @@
 import numpy as np
 from apprentice import space
+from apprentice import surrogatemodel
+
+from apprentice.util import Util
+
+
 
 class Function(object):
     def __init__(self, dim, fnspace=None, **kwargs):
@@ -22,12 +27,12 @@ class Function(object):
             self.bounds[d][1] = self.fnspace_.b_[d]
 
     @classmethod
-    def mkEmpty(cls, dim):
+    def mk_empty(cls, dim):
         return cls(dim)
 
     @classmethod
-    def fromSpace(cls, spc):
-        if isinstance(spc, space.Space):
+    def from_space(cls, spc):
+        if Util.inherits_from(spc, 'Space'):
             return cls(spc.dim, spc)
         else:
             try:
@@ -37,11 +42,22 @@ class Function(object):
 
 
     @classmethod
-    def fromApproximations(cls, approx):
+    def from_surrogates(cls, surrogates):
         """
-        approx is a list of approximation objects.
+        surrogates is a list of approximation objects.
+        They must have the same dimension
         """
-        pass
+        checkdim = None
+        for s in surrogates:
+            if not Util.inherits_from(s, 'SurrogateModel'):
+                raise Exception("Object of type {} does not derive from SurrogateModel".format(type(s)))
+            if checkdim is None:
+                checkdim = s.dim
+            else:
+                if not s.dim == checkdim:
+                    raise Exception("Encountered objects of different dimensions: {} and {} ".format(s.dim, checkdim))
+
+        return cls(checkdim, surrogates=surrogates)
 
 
     @property
