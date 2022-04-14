@@ -1,5 +1,5 @@
 import numpy as np
-from space import Space
+from apprentice.space import Space
 
 class SurrogateModel(object):
     def __init__(self,dim,fnspace=None,**kwargs):
@@ -7,11 +7,13 @@ class SurrogateModel(object):
             self.fnspace_ = Space(dim,
                                         [-np.inf for d in range(dim)],
                                         [np.inf for d in range(dim)],
-                                        names=kwargs['pnames'])
+                                        pnames=kwargs['pnames'] if 'pnames' in kwargs else None)
         else:
             if isinstance(fnspace, Space):
                 self.fnspace_ = fnspace
             else:
+                from IPython import embed
+                embed()
                 raise Exception("Unable to interpret space argument")
 
     @classmethod

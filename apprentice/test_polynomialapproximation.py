@@ -3,7 +3,7 @@ import numpy as np
 import pprint
 
 import apprentice
-from polynomialapproximation import PolynomialApproximation
+from apprentice.polynomialapproximation import PolynomialApproximation
 
 class TestPolynomialApproximation(unittest.TestCase):
     @staticmethod
