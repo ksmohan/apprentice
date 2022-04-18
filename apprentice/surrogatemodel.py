@@ -12,8 +12,6 @@ class SurrogateModel(object):
             if isinstance(fnspace, Space):
                 self.fnspace_ = fnspace
             else:
-                from IPython import embed
-                embed()
                 raise Exception("Unable to interpret space argument")
 
     @classmethod
