@@ -6,6 +6,14 @@ class SimpleFunction(Function):
     def objective(self, x):
         return x**2
 
+from apprentice.surrogatemodel import SurrogateModel
+class Dummy(SurrogateModel):
+    def __repr__(self):
+        return "I am a dummy"
+    def f_x(self, x):
+        return 2*x
+
+
 
 class TestFunction(unittest.TestCase):
 
@@ -39,6 +47,26 @@ class TestFunction(unittest.TestCase):
             sf([0,0])
 
         self.assertTrue("The function objective must be implemented in the derived class" in str(context.exception))
+
+
+    def test_mixed(self):
+        APPR = []
+
+        APPR.append(PolynomialApproximation(2))
+        APPR.append(Dummy(2))
+        sf = Function.from_surrogates( APPR )
+        self.assertEqual(sf.dim, 2)
+
+        print(Dummy(2))
+
+        d = Dummy(2)
+        print(d(3))
+
+
+
+    def test_fixed(self):
+        sf = SimpleFunction.from_space( ([0,2],[4,7]), fixed=[[0,14]] ) # Fix the first dimension to the value 14
+        self.assertEqual(sf([999])[0], 196)
 
 
 
