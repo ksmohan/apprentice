@@ -106,3 +106,17 @@ class Util(object):
                 else:
                     ret[n] *= pow(xs[d], ee[n][d])
         return ret
+
+    @staticmethod
+    def calcSpans(spans1, DIM, G1, G2, H2, H3, grads, egrads):
+        for numx in range(DIM):
+            for numy in range(DIM):
+                if numy<=numx:
+                    spans1[numx][numy] +=        G1 *  grads[:,numx] *  grads[:,numy]
+                    spans1[numx][numy] +=        G2 * (egrads[:,numx] *  grads[:,numy] + egrads[:,numy] *  grads[:,numx])
+                    spans1[numx][numy] += (H2 + H3) * egrads[:,numx] * egrads[:,numy]
+        for numx in range(DIM):
+            for numy in range(DIM):
+                if numy>numx:
+                    spans1[numx][numy] = spans1[numy][numx]
+        return spans1
