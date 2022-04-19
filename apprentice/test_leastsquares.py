@@ -21,9 +21,9 @@ class TestFunction(unittest.TestCase):
 
 
     def test_fromApproximations(self):
-        DIM     =   5
-        OMAX    =   5
-        NOBJS   = 100
+        DIM     =   3
+        OMAX    =   3
+        NOBJS   =   2
         NPOINTS =  20
 
         APPR = get_rdm_poly(DIM,OMAX,NOBJS)
@@ -32,25 +32,28 @@ class TestFunction(unittest.TestCase):
         DATA = np.random.random(NOBJS)
         ERRS = np.random.random(NOBJS)
 
-        A = LeastSquares(DIM, None, DATA, APPR, ERRS)
-        B = LeastSquares(DIM, None, DATA,   ps, ERRS) ## Should be the faster one
+        PRF = np.ones(NOBJS)
 
+        A = LeastSquares(DIM, None, DATA, APPR, ERRS, NOBJS, APPR)#, fixed=[[0,0.5]])
+        B = LeastSquares(DIM, None, DATA,   ps, ERRS, NOBJS, ps) ## Should be the faster one
+
+        # print(A([0,0]), B([0.5,0,0]))
+        # print(B.gradient([0.5,0,0]))
+        # print(A.gradient([0,0]) - B.gradient([0.5,0,0])) # Works!
+
+        # print( np.sum( B.hessian([0.5,0,0]) ))# - A.hessian([0,0,0,0]) ) )
+        # print( np.sum( A.hessian([0,0]) ))# - A.hessian([0,0,0,0]) ) )
+        # from IPython import embed
+        # embed()
 
         X = np.random.random((NPOINTS, DIM))
         for i in range(NPOINTS):
             x = X[i]
-            VA = A.vals(x)
-            VB = B.vals(x)
-
-            for d in range(DIM):
-                self.assertAlmostEqual(VA[d], VB[d])
 
 
             self.assertAlmostEqual(A(x), B(x))
 
 
-        # from IPython import embed
-        # embed()
 
 if __name__ == "__main__":
     unittest.main()
