@@ -40,6 +40,7 @@ class Function(object):
     def set_bounds(self, bmin, bmax):
         """
         Expect min, max
+        We always expect bounds are being set for all dimensions, not just the free ones
         """
         for d in range(self.dim_):
             self.bounds_[d][0] = bmin[d]
