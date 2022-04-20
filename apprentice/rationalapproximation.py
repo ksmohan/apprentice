@@ -409,7 +409,7 @@ class RationalApproximation(SurrogateModel):
                 except Exception as e:
                     ntries+=1
                     if ntries > 5:
-                        fit_solver = 'filter'
+                        fit_solver = 'ipopt'
                     print("{} --- retrying ...".format(e))
                     pass
 
@@ -545,7 +545,7 @@ class RationalApproximation(SurrogateModel):
             optstatus = {'message':ret.get('message'),'status':ret.get('status'),'noOfIterations':ret.get('nit'),'time':end-start}
             return ret.get('x'), ret.get('fun'), optstatus
 
-        def pyomofit(iterationNo, solver='filter'):
+        def pyomofit(iterationNo, solver='ipopt'):
             from pyomo import environ
 
             def lsqObjPyomo(model):
@@ -630,7 +630,7 @@ class RationalApproximation(SurrogateModel):
             return coeffs,leastSq,optstatus
 
         def multiple_restart_for_iter_rob_o(coeffs):
-            def rob_o_pyomo(coeffs, solver='filter',r=0):
+            def rob_o_pyomo(coeffs, solver='ipopt',r=0):
                 from pyomo import environ
 
                 def robObjPyomo(model):
