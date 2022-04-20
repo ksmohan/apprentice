@@ -177,7 +177,8 @@ class PolynomialApproximation(SurrogateModel):
         10% faster than predict --- exploit structure somewhat
         """
         x = self.fnspace.scale(np.array(x))
-        rec_p = apprentice.monomial.recurrence2(x, self.struct_p_, self.nnz_)
+        if self.dim==1: rec_p=apprentice.monomial.recurrence1D(x, self.struct_p_)
+        else           :rec_p=apprentice.monomial.recurrence2(x, self.struct_p_, self.nnz_)
         return self.coeff_numerator.dot(rec_p)
 
     def f_X(self, X):

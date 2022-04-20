@@ -216,7 +216,7 @@ def vandermonde(params, order):
     from apprentice import tools
     s = monomialStructure(dim, order)
     if dim == 1:
-        V = np.zeros((dim, tools.numCoeffsPoly(dim, order)), dtype=np.float64)
+        V = np.zeros((params.shape[0], tools.numCoeffsPoly(dim, order)), dtype=np.float64)
         for a, p in enumerate(params): V[a] = recurrence1D(p, s)
         return V
     else:
