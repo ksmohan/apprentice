@@ -38,7 +38,7 @@ class LeastSquares(Function):
 
     def objective(self, x):
         nom   = self.prf2_ * ( np.array( self.vals(x) ) - self.data_ )**2
-        denom = self.err2_
+        denom = 1*self.err2_
         if self.evals is not None:  denom += np.array( self.evals(x) )**2
         return np.sum(nom/denom)
 
