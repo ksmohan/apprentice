@@ -21,17 +21,21 @@ def timeit(method):
 
     return timed
 
-
 class PolynomialApproximation(SurrogateModel):
-    __allowed = ("m_", "m", "pcoeff_", "training_size_", "pnames_","pnames_",
-                 "compute_cov_","strategy_","strategy",'cov_','scale_min','scale_max')
+    __allowed = ("m_", "m",
+                 "pcoeff_","pcoeff",
+                 "training_size_","training_size_",
+                 "strategy_","strategy",
+                 'cov_'"cov",
+                 "compute_cov_",'compute_cov'
+                 )
 
     def __init__(self, dim, fnspace=None, **kwargs: dict):
         super().__init__(dim, fnspace)
         for k, v in kwargs.items():
-            if k == 'm': k = 'm_'
-            elif k == 'strategy': k='strategy_'
-            elif k in ['pnames','scale_min','scale_max']: continue
+            if k in ['m','training_size',"pcoeff",'strategy','cov','compute_cov']:
+                k+="_"
+            elif k in ['pnames','pnames_','scale_min','scale_max','scale_min_', 'scale_max_']: continue
             assert (k in self.__class__.__allowed)
             setattr(self,k, v)
 
@@ -74,6 +78,10 @@ class PolynomialApproximation(SurrogateModel):
     @property
     def dim(self):
         return self.fnspace.dim
+
+    @property
+    def pnames(self):
+        return self.fnspace.pnames
 
     @property
     def order_numerator(self):
@@ -139,7 +147,7 @@ class PolynomialApproximation(SurrogateModel):
                 "Not enough inputs: got %i but require %i to do m=%i" % (Y.shape[0], n_required, m))
 
         self.set_structures()
-
+        X = self.fnspace.scale(X)
         from apprentice import monomial
         VM = monomial.vandermonde(X, m)
         strategy = self.fit_strategy
@@ -176,16 +184,7 @@ class PolynomialApproximation(SurrogateModel):
         """
         Evaluation of the numer poly at many points X.
         """
-        XS = self.fnspace.scale(X)
-        if self.dim > 1:
-            zz = np.ones((*self.struct_p_.shape, len(XS)))
-            np.power(XS, self.struct_p_[:, np.newaxis], out=(zz),
-                     where=self.struct_p_[:, np.newaxis] > 0)
-            rec_p = np.prod(zz, axis=2)
-            # rec_p = np.prod(np.power(XS, self.struct_p_[:, np.newaxis]), axis=2)
-        else:
-            rec_p = np.power(XS, self.struct_p_[:, np.newaxis])
-        return self.coeff_numerator.dot(rec_p)
+        return [self.f_x(x) for x in X]
 
     def __repr__(self):
         """
@@ -200,18 +199,18 @@ class PolynomialApproximation(SurrogateModel):
         Store all info in dict as basic python objects suitable for JSON
         """
         d = {}
-        d["m_"] = self.order_numerator
-        d["training_size_"] = self.training_size
-        d["strategy_"] = self.fit_strategy
-        d["pcoeff_"] = list(self.coeff_numerator)
-        d["fnspace_"] = self.fnspace.as_dict
-        d['compute_cov_'] = self.to_compute_covariance
+        d["m"] = self.order_numerator
+        d["training_size"] = self.training_size
+        d["strategy"] = self.fit_strategy
+        d["pcoeff"] = list(self.coeff_numerator)
+        d["fnspace"] = self.fnspace.as_dict
+        d['compute_cov'] = self.to_compute_covariance
         if self.to_compute_covariance is not False:
-            d['cov_'] = self.cov_
-        if hasattr(self,'vmin') and self.vmin is not None: d["vmin"] = self.vmin
-        if hasattr(self,'vmax') and self.vmax is not None: d["vmax"] = self.vmax
-        if hasattr(self,'xmin') and self.xmin is not None: d["xmin"] = self.xmin
-        if hasattr(self,'xmax') and self.xmax is not None: d["xmax"] = self.xmax
+            d['cov'] = self.cov_
+        # if hasattr(self,'vmin') and self.vmin is not None: d["vmin"] = self.vmin
+        # if hasattr(self,'vmax') and self.vmax is not None: d["vmax"] = self.vmax
+        # if hasattr(self,'xmin') and self.xmin is not None: d["xmin"] = self.xmin
+        # if hasattr(self,'xmax') and self.xmax is not None: d["xmax"] = self.xmax
         return d
 
     def save(self, fname):
@@ -223,13 +222,13 @@ class PolynomialApproximation(SurrogateModel):
     def from_data_structure(cls,data_structure):
         if not isinstance(data_structure, dict):
             raise Exception("data_structure has to be a dictionary")
-        dim = data_structure['fnspace_']['dim_']
-        a = data_structure['fnspace_']['a_']
-        b = data_structure['fnspace_']['b_']
-        sa = data_structure['fnspace_']['sa_']
-        sb = data_structure['fnspace_']['sb_']
-        pnames = data_structure['fnspace_']['pnames_']
-        data_structure.pop('fnspace_')
+        dim = data_structure['fnspace']['dim_']
+        a = data_structure['fnspace']['a_']
+        b = data_structure['fnspace']['b_']
+        sa = data_structure['fnspace']['sa_']
+        sb = data_structure['fnspace']['sb_']
+        pnames = data_structure['fnspace']['pnames_']
+        data_structure.pop('fnspace')
         fnspace = Space(dim,
                         a=a,
                         b=b,
