@@ -53,7 +53,29 @@ class TestFunction(unittest.TestCase):
 
             self.assertAlmostEqual(A(x), B(x))
 
+    def test_fromApproximations_1D(self):
+        DIM     =   1
+        OMAX    =   3
+        NOBJS   =   2
+        NPOINTS =  20
 
+        APPR = get_rdm_poly(DIM,OMAX,NOBJS)
+        ps = PolySet.from_surrogates(APPR)
+
+        DATA = np.random.random(NOBJS)
+        ERRS = np.random.random(NOBJS)
+
+        PRF = np.ones(NOBJS)
+
+        A = LeastSquares(DIM, None, DATA, APPR, ERRS, NOBJS, APPR)#, fixed=[[0,0.5]])
+        B = LeastSquares(DIM, None, DATA,   ps, ERRS, NOBJS, ps) ## Should be the faster one
+
+        X = np.random.random((NPOINTS, DIM))
+        for i in range(NPOINTS):
+            x = X[i]
+
+
+            self.assertAlmostEqual(A(x), B(x))
 
 if __name__ == "__main__":
     unittest.main()
