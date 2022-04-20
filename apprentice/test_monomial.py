@@ -4,11 +4,11 @@ Test Monomials
 import unittest
 import numpy as np
 
-from monomial import mono_next_grlex
-from monomial import monomialStructure
-from monomial import recurrence1D
-from monomial import recurrence
-from monomial import vandermonde
+from apprentice.monomial import mono_next_grlex
+from apprentice.monomial import monomialStructure
+from apprentice.monomial import recurrence1D
+from apprentice.monomial import recurrence
+from apprentice.monomial import vandermonde
 
 class TestMonomial(unittest.TestCase):
     def test_mono_next_grlex(self):

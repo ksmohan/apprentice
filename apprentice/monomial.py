@@ -164,7 +164,7 @@ def recurrence(x: list[float], structure) -> list[float]:
     return np.prod(x ** structure, axis=1, dtype=np.float64)
 
 
-def recurrence2(x: list[float], structure, nnz) -> list[float]:
+def recurrence2(x: list[float], structure, nnz=slice(None, None, None)) -> list[float]:
     """
     Efficient version of recurrence with beforehand knowledge of nonzero (nnz)
     structure elements.
