@@ -7,7 +7,22 @@ from apprentice.polynomialapproximation import PolynomialApproximation
 
 class TestPolynomialApproximation(unittest.TestCase):
     @staticmethod
-    def get_test_data(scaled=False):
+    def get_data_1D(scaled=False):
+        X,Y = TestPolynomialApproximation.get_data_2D(scaled)
+        X_1D = [[x[0]] for x in X]
+        Y_1D = [x[0]**2 + 2*x[0] + 1 for x in X_1D]
+
+        return X_1D,Y_1D
+
+    @staticmethod
+    def get_test_data_1D(scaled=False):
+        X,Y = TestPolynomialApproximation.get_test_data_2D(scaled)
+        X_1D = [[x[0]] for x in X]
+        Y_1D = [x[0]**2 + 2*x[0] + 1 for x in X_1D]
+
+        return X_1D,Y_1D
+    @staticmethod
+    def get_test_data_2D(scaled=False):
         X_2D_unscaled = [[0.3337290751538484, 27.51274282370659],
                          [0.6540702777506159, 26.3872070199262],
                          [0.6855372636713173, 21.79260623614056],
@@ -58,7 +73,7 @@ class TestPolynomialApproximation(unittest.TestCase):
         else: return X_2D_unscaled,Y_2D_unscaled
 
     @staticmethod
-    def get_data(scaled=False):
+    def get_data_2D(scaled=False):
         X_2D_unscaled = [[5.88130801e-01, 3.71525106e+01],
                          [8.97713728e-01, 3.89955805e+01],
                          [8.91530729e-01, 3.12337372e+01],
@@ -110,48 +125,92 @@ class TestPolynomialApproximation(unittest.TestCase):
 
     @staticmethod
     def get_pa_fit_s1_unscaled():
-        (X,Y) = TestPolynomialApproximation.get_data()
+        (X,Y) = TestPolynomialApproximation.get_data_2D()
         P = PolynomialApproximation.from_interpolation_points(X,Y,
                                                               m=2,
                                                               strategy=1)
         return P
 
+    def test_from_interpolation_points_s1_unscaled_1D(self):
+        scaled=False
+        (X,Y) = TestPolynomialApproximation.get_data_1D(scaled=scaled)
+        P = PolynomialApproximation.from_interpolation_points(X,Y,
+                                                              m=2,
+                                                              strategy=1)
+        (X_T,Y_T) = TestPolynomialApproximation.get_test_data_1D(scaled=False)
+        Y_T_R = P.f_X(X_T)
+        C2 = sum([(y1-y2)**2 for (y1,y2) in zip(Y_T_R,Y_T)])
+        assert(C2 < 1e-6)
+
+    def test_from_interpolation_points_s1_scaled_1D(self):
+        scaled=True
+        (X,Y) = TestPolynomialApproximation.get_data_1D(scaled=scaled)
+        P = PolynomialApproximation.from_interpolation_points(X,Y,
+                                                              m=2,
+                                                              strategy=1)
+        (X_T,Y_T) = TestPolynomialApproximation.get_test_data_1D(scaled=False)
+        Y_T_R = P.f_X(X_T)
+        C2 = sum([(y1-y2)**2 for (y1,y2) in zip(Y_T_R,Y_T)])
+        assert(C2 < 1e-6)
+
+    def test_from_interpolation_points_s2_unscaled_1D(self):
+        scaled=False
+        (X,Y) = TestPolynomialApproximation.get_data_1D(scaled=scaled)
+        P = PolynomialApproximation.from_interpolation_points(X,Y,
+                                                              m=2,
+                                                              strategy=2)
+        (X_T,Y_T) = TestPolynomialApproximation.get_test_data_1D(scaled=False)
+        Y_T_R = P.f_X(X_T)
+        C2 = sum([(y1-y2)**2 for (y1,y2) in zip(Y_T_R,Y_T)])
+        assert(C2 < 1e-6)
+
+    def test_from_interpolation_points_s2_scaled_1D(self):
+        scaled=True
+        (X,Y) = TestPolynomialApproximation.get_data_1D(scaled=scaled)
+        P = PolynomialApproximation.from_interpolation_points(X,Y,
+                                                              m=2,
+                                                              strategy=2)
+        (X_T,Y_T) = TestPolynomialApproximation.get_test_data_1D(scaled=False)
+        Y_T_R = P.f_X(X_T)
+        C2 = sum([(y1-y2)**2 for (y1,y2) in zip(Y_T_R,Y_T)])
+        assert(C2 < 1e-6)
+
     def test_from_interpolation_points_s1_unscaled(self):
         P = TestPolynomialApproximation.get_pa_fit_s1_unscaled()
-        (X_T,Y_T) = TestPolynomialApproximation.get_test_data(scaled=False)
+        (X_T,Y_T) = TestPolynomialApproximation.get_test_data_2D(scaled=False)
         Y_T_R = P.f_X(X_T)
         C2 = sum([(y1-y2)**2 for (y1,y2) in zip(Y_T_R,Y_T)])
         assert(C2 < 1e-6)
 
     def test_from_interpolation_points_s2_unscaled(self):
         scaled=False
-        (X,Y) = TestPolynomialApproximation.get_data(scaled=scaled)
+        (X,Y) = TestPolynomialApproximation.get_data_2D(scaled=scaled)
         P = PolynomialApproximation.from_interpolation_points(X,Y,
                                                               m=2,
                                                               strategy=2)
-        (X_T,Y_T) = TestPolynomialApproximation.get_test_data(scaled=scaled)
+        (X_T,Y_T) = TestPolynomialApproximation.get_test_data_2D(scaled=scaled)
         Y_T_R = P.f_X(X_T)
         C2 = sum([(y1-y2)**2 for (y1,y2) in zip(Y_T_R,Y_T)])
         assert(C2 < 1e-6)
 
     def test_from_interpolation_points_s1_scaled(self):
         scaled=True
-        (X,Y) = TestPolynomialApproximation.get_data(scaled=scaled)
+        (X,Y) = TestPolynomialApproximation.get_data_2D(scaled=scaled)
         P = PolynomialApproximation.from_interpolation_points(X,Y,
                                                               m=2,
                                                               strategy=1)
-        (X_T,Y_T) = TestPolynomialApproximation.get_test_data(scaled=scaled)
+        (X_T,Y_T) = TestPolynomialApproximation.get_test_data_2D(scaled=scaled)
         Y_T_R = P.f_X(X_T)
         C2 = sum([(y1-y2)**2 for (y1,y2) in zip(Y_T_R,Y_T)])
         assert(C2 < 1e-6)
 
     def test_from_interpolation_points_s2_scaled(self):
         scaled=True
-        (X,Y) = TestPolynomialApproximation.get_data(scaled=scaled)
+        (X,Y) = TestPolynomialApproximation.get_data_2D(scaled=scaled)
         P = PolynomialApproximation.from_interpolation_points(X,Y,
                                                               m=2,
                                                               strategy=2)
-        (X_T,Y_T) = TestPolynomialApproximation.get_test_data(scaled=scaled)
+        (X_T,Y_T) = TestPolynomialApproximation.get_test_data_2D(scaled=scaled)
         Y_T_R = P.f_X(X_T)
         C2 = sum([(y1-y2)**2 for (y1,y2) in zip(Y_T_R,Y_T)])
         assert(C2 < 1e-6)
@@ -164,7 +223,7 @@ class TestPolynomialApproximation(unittest.TestCase):
         assert(np.all(np.isclose(P_from_file.coeff_numerator, P.coeff_numerator)))
 
     def test_gradient(self):
-        (X,Y) = TestPolynomialApproximation.get_data(scaled=True)
+        (X,Y) = TestPolynomialApproximation.get_data_2D(scaled=True)
         P = PolynomialApproximation.from_interpolation_points(X,Y,
                                                               m=2,
                                                               strategy=1)
@@ -173,7 +232,7 @@ class TestPolynomialApproximation(unittest.TestCase):
         assert(np.all(np.isclose(grad, exp_grad)))
 
     def test_hessian(self):
-        (X,Y) = TestPolynomialApproximation.get_data(scaled=True)
+        (X,Y) = TestPolynomialApproximation.get_data_2D(scaled=True)
         P = PolynomialApproximation.from_interpolation_points(X,Y,
                                                               m=2,
                                                               strategy=1)
@@ -190,11 +249,11 @@ class TestPolynomialApproximation(unittest.TestCase):
         assert (np.isclose(P.coeff2_norm, 1086.4266))
 
     def test_f_x(self):
-        (X,Y) = TestPolynomialApproximation.get_data(scaled=False)
+        (X,Y) = TestPolynomialApproximation.get_data_2D(scaled=False)
         Pusc = PolynomialApproximation.from_interpolation_points(X,Y,
                                                               m=2,
                                                               strategy=1)
-        (X,Y) = TestPolynomialApproximation.get_data(scaled=True)
+        (X,Y) = TestPolynomialApproximation.get_data_2D(scaled=True)
         Psc = PolynomialApproximation.from_interpolation_points(X,Y,
                                                               m=2,
                                                               strategy=1)
@@ -203,7 +262,7 @@ class TestPolynomialApproximation(unittest.TestCase):
         assert (np.isclose(Pusc(x), expected_value) and np.isclose(Psc(x), expected_value))
 
     def test_f_X(self):
-        (X,Y) = TestPolynomialApproximation.get_data(scaled=True)
+        (X,Y) = TestPolynomialApproximation.get_data_2D(scaled=True)
         Psc = PolynomialApproximation.from_interpolation_points(X,Y,
                                                                 m=2,
                                                                 strategy=1)
@@ -212,7 +271,7 @@ class TestPolynomialApproximation(unittest.TestCase):
         assert(np.all(np.isclose(Psc.f_X(X), expected_value_sc)))
 
     def test_set_pnames(self):
-        (X, Y) = TestPolynomialApproximation.get_data(scaled=True)
+        (X, Y) = TestPolynomialApproximation.get_data_2D(scaled=True)
         Psc = PolynomialApproximation.from_interpolation_points(X, Y,
                                                                 m=2,
                                                                 strategy=1,
