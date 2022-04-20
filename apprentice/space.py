@@ -79,7 +79,8 @@ class Space(object):
             if self.pnames is not None:
                 s += "{} ".format(self.pnames[d])
 
-            s += "[{} {}]\n".format(self.a_[d], self.b_[d])
+            s += "[{} {}] ".format(self.a_[d], self.b_[d])
+            s += "[{} {}]\n".format(self.sa_[d], self.sb_[d])
 
         return s
 
