@@ -3,7 +3,7 @@ import numpy as np
 import pprint
 
 import apprentice
-from rationalapproximation import RationalApproximation
+from apprentice.rationalapproximation import RationalApproximation
 
 class TestRationalApproximation(unittest.TestCase):
     @staticmethod

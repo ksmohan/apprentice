@@ -3,8 +3,8 @@ import pprint
 import numpy as np
 
 import apprentice
-from surrogatemodel import SurrogateModel
-from space import Space
+from apprentice.surrogatemodel import SurrogateModel
+from apprentice.space import Space
 from scipy.optimize import minimize
 from timeit import default_timer as timer
 
