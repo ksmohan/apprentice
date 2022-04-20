@@ -121,8 +121,8 @@ class Space(object):
         return points
 
     def sample(self, npoints: int, method="uniform", seed=None):
-        return self.sample_main(dim = self.dim, b_min=self.a_,b_max=self.b_,npoints=npoints,method=method,seed=seed)
+        return self.sample_main(b_min=self.a_,b_max=self.b_,npoints=npoints,method=method,seed=seed)
 
     def sample_scaled(self, npoints: int, method="uniform", seed=None):
-        return self.sample_main(dim = self.dim, b_min=self.sa_,b_max=self.sb_,npoints=npoints,method=method,seed=seed)
+        return self.sample_main(b_min=self.sa_,b_max=self.sb_,npoints=npoints,method=method,seed=seed)
 
