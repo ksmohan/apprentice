@@ -122,100 +122,110 @@ class TestPolynomialApproximation(unittest.TestCase):
         Y_T_R = P.f_X(X_T)
         C2 = sum([(y1-y2)**2 for (y1,y2) in zip(Y_T_R,Y_T)])
         assert(C2 < 1e-6)
-    #
-    # def test_from_interpolation_points_s2_unscaled(self):
-    #     (X,Y) = TestPolynomialApproximation.get_data()
-    #     P = PolynomialApproximation.from_interpolation_points(X,Y,
-    #                                                           m=2,
-    #                                                           strategy=2)
-    #     assert(np.all(np.isclose(P.coeff_numerator, TestPolynomialApproximation.get_exp_pcoeff())))
-    # def test_from_interpolation_points_s1_scaled(self):
-    #     (X,Y) = TestPolynomialApproximation.get_data(scaled=True)
-    #     P = PolynomialApproximation.from_interpolation_points(X,Y,
-    #                                                           m=2,
-    #                                                           strategy=1)
-    #     assert(np.all(np.isclose(P.coeff_numerator, TestPolynomialApproximation.get_exp_pcoeff())))
-    # def test_from_interpolation_points_s2_scaled(self):
-    #     (X,Y) = TestPolynomialApproximation.get_data(scaled=True)
-    #     P = PolynomialApproximation.from_interpolation_points(X,Y,
-    #                                                           m=2,
-    #                                                           strategy=2)
-    #     assert(np.all(np.isclose(P.coeff_numerator, TestPolynomialApproximation.get_exp_pcoeff())))
-    #
-    # def test_save_and_from_file(self):
-    #     P = TestPolynomialApproximation.get_pa_fit_s1_unscaled()
-    #     tmp_file = "/tmp/pa.json"
-    #     P.save(tmp_file)
-    #     P_from_file = PolynomialApproximation.from_file(tmp_file)
-    #     assert(np.all(np.isclose(P_from_file.coeff_numerator, TestPolynomialApproximation.get_exp_pcoeff())))
-    #
-    # def test_gradient(self):
-    #     (X,Y) = TestPolynomialApproximation.get_data(scaled=True)
-    #     P = PolynomialApproximation.from_interpolation_points(X,Y,
-    #                                                           m=2,
-    #                                                           strategy=1)
-    #     exp_grad = [4.,4.]
-    #     grad = P.gradient([1,1])
-    #     assert(np.all(np.isclose(grad, exp_grad)))
-    #
-    # def test_hessian(self):
-    #     (X,Y) = TestPolynomialApproximation.get_data(scaled=True)
-    #     P = PolynomialApproximation.from_interpolation_points(X,Y,
-    #                                                           m=2,
-    #                                                           strategy=1)
-    #     exp_hess = [[2.,2.],[2.,2.]]
-    #     hess = P.hessian([1,1])
-    #     assert(np.all(np.isclose(hess, exp_hess)))
-    #
-    # def test_coeff_norm(self):
-    #     P = TestPolynomialApproximation.get_pa_fit_s1_unscaled()
-    #     assert (np.isclose(P.coeff_norm, 4.))
-    #
-    #
-    # def test_coeff2_norm(self):
-    #     P = TestPolynomialApproximation.get_pa_fit_s1_unscaled()
-    #     assert (np.isclose(P.coeff2_norm, np.sqrt(6.)))
-    #
-    # def test_f_x(self):
-    #     (X,Y) = TestPolynomialApproximation.get_data(scaled=False)
-    #     Pusc = PolynomialApproximation.from_interpolation_points(X,Y,
-    #                                                           m=2,
-    #                                                           strategy=1)
-    #     (X,Y) = TestPolynomialApproximation.get_data(scaled=True)
-    #     Psc = PolynomialApproximation.from_interpolation_points(X,Y,
-    #                                                           m=2,
-    #                                                           strategy=1)
-    #     x = [0.5,25]
-    #     expected_value_sc=650.25
-    #     expected_value_usc=0.25902139952
-    #     assert (np.isclose(Pusc(x), expected_value_usc) and np.isclose(Psc(x), expected_value_sc))
-    #
-    #
-    #
-    # def test_f_X(self):
-    #     (X,Y) = TestPolynomialApproximation.get_data(scaled=True)
-    #     Psc = PolynomialApproximation.from_interpolation_points(X,Y,
-    #                                                             m=2,
-    #                                                             strategy=1)
-    #     X = [[0.5,20],[0.5,25]]
-    #     expected_value_sc=[420.25,650.25]
-    #     assert(np.all(np.isclose(Psc.f_X(X), expected_value_sc)))
-    #
-    # def test_set_pnames(self):
-    #     (X, Y) = TestPolynomialApproximation.get_data(scaled=True)
-    #     Psc = PolynomialApproximation.from_interpolation_points(X, Y,
-    #                                                             m=2,
-    #                                                             strategy=1,
-    #                                                             pnames=[
-    #                                                                     "dim1",
-    #                                                                     "dim2",
-    #                                                                     "dim3"
-    #                                                                     ]
-    #                                                             )
-    #     expected_pnames = ["dim1","dim2","dim3"]
-    #     given_pnames = Psc.pnames
-    #     assert (given_pnames==expected_pnames)
-    #
+
+    def test_from_interpolation_points_s2_unscaled(self):
+        scaled=False
+        (X,Y) = TestPolynomialApproximation.get_data(scaled=scaled)
+        P = PolynomialApproximation.from_interpolation_points(X,Y,
+                                                              m=2,
+                                                              strategy=2)
+        (X_T,Y_T) = TestPolynomialApproximation.get_test_data(scaled=scaled)
+        Y_T_R = P.f_X(X_T)
+        C2 = sum([(y1-y2)**2 for (y1,y2) in zip(Y_T_R,Y_T)])
+        assert(C2 < 1e-6)
+
+    def test_from_interpolation_points_s1_scaled(self):
+        scaled=True
+        (X,Y) = TestPolynomialApproximation.get_data(scaled=scaled)
+        P = PolynomialApproximation.from_interpolation_points(X,Y,
+                                                              m=2,
+                                                              strategy=1)
+        (X_T,Y_T) = TestPolynomialApproximation.get_test_data(scaled=scaled)
+        Y_T_R = P.f_X(X_T)
+        C2 = sum([(y1-y2)**2 for (y1,y2) in zip(Y_T_R,Y_T)])
+        assert(C2 < 1e-6)
+
+    def test_from_interpolation_points_s2_scaled(self):
+        scaled=True
+        (X,Y) = TestPolynomialApproximation.get_data(scaled=scaled)
+        P = PolynomialApproximation.from_interpolation_points(X,Y,
+                                                              m=2,
+                                                              strategy=2)
+        (X_T,Y_T) = TestPolynomialApproximation.get_test_data(scaled=scaled)
+        Y_T_R = P.f_X(X_T)
+        C2 = sum([(y1-y2)**2 for (y1,y2) in zip(Y_T_R,Y_T)])
+        assert(C2 < 1e-6)
+
+    def test_save_and_from_file(self):
+        P = TestPolynomialApproximation.get_pa_fit_s1_unscaled()
+        tmp_file = "/tmp/pa.json"
+        P.save(tmp_file)
+        P_from_file = PolynomialApproximation.from_file(tmp_file)
+        assert(np.all(np.isclose(P_from_file.coeff_numerator, P.coeff_numerator)))
+
+    def test_gradient(self):
+        (X,Y) = TestPolynomialApproximation.get_data(scaled=True)
+        P = PolynomialApproximation.from_interpolation_points(X,Y,
+                                                              m=2,
+                                                              strategy=1)
+        exp_grad = [4.,4.]
+        grad = P.gradient([1,1])
+        assert(np.all(np.isclose(grad, exp_grad)))
+
+    def test_hessian(self):
+        (X,Y) = TestPolynomialApproximation.get_data(scaled=True)
+        P = PolynomialApproximation.from_interpolation_points(X,Y,
+                                                              m=2,
+                                                              strategy=1)
+        exp_hess = [[2.,2.],[2.,2.]]
+        hess = P.hessian([1,1])
+        assert(np.all(np.isclose(hess, exp_hess)))
+
+    def test_coeff_norm(self):
+        P = TestPolynomialApproximation.get_pa_fit_s1_unscaled()
+        assert (np.isclose(P.coeff_norm, 1591.4749))
+
+    def test_coeff2_norm(self):
+        P = TestPolynomialApproximation.get_pa_fit_s1_unscaled()
+        assert (np.isclose(P.coeff2_norm, 1086.4266))
+
+    def test_f_x(self):
+        (X,Y) = TestPolynomialApproximation.get_data(scaled=False)
+        Pusc = PolynomialApproximation.from_interpolation_points(X,Y,
+                                                              m=2,
+                                                              strategy=1)
+        (X,Y) = TestPolynomialApproximation.get_data(scaled=True)
+        Psc = PolynomialApproximation.from_interpolation_points(X,Y,
+                                                              m=2,
+                                                              strategy=1)
+        x = [0.5,25]
+        expected_value=650.25
+        assert (np.isclose(Pusc(x), expected_value) and np.isclose(Psc(x), expected_value))
+
+    def test_f_X(self):
+        (X,Y) = TestPolynomialApproximation.get_data(scaled=True)
+        Psc = PolynomialApproximation.from_interpolation_points(X,Y,
+                                                                m=2,
+                                                                strategy=1)
+        X = [[0.5,20],[0.5,25]]
+        expected_value_sc=[420.25,650.25]
+        assert(np.all(np.isclose(Psc.f_X(X), expected_value_sc)))
+
+    def test_set_pnames(self):
+        (X, Y) = TestPolynomialApproximation.get_data(scaled=True)
+        Psc = PolynomialApproximation.from_interpolation_points(X, Y,
+                                                                m=2,
+                                                                strategy=1,
+                                                                pnames=[
+                                                                        "dim1",
+                                                                        "dim2",
+                                                                        "dim3"
+                                                                        ]
+                                                                )
+        expected_pnames = ["dim1","dim2","dim3"]
+        given_pnames = Psc.pnames
+        assert (given_pnames==expected_pnames)
+
 
 if __name__ == "__main__":
     unittest.main()
