@@ -92,7 +92,8 @@ class Space(object):
         newnames = [self.pnames[d] for d in dims] if not self.pnames is None else None
         return Space(newdim, [self.a_[d] for d in dims], [self.b_[d] for d in dims], pnames=newnames)
 
-    def sample_main(self, b_min,b_max,npoints: int, method="uniform", seed=None):
+    @staticmethod
+    def sample_main(b_min, b_max, npoints: int, method="uniform", seed=None):
         """
         Sample npoints self.dim_-dimensional pointsrandomly from within this space's bounds.
         Provided methods: uniform,lhs,sobol
@@ -104,13 +105,13 @@ class Space(object):
         if method== "uniform":
             if seed is not None:
                 np.random.seed(seed)
-            points = np.random.uniform(low=b_min, high=b_max,size=(npoints, self.dim))
+            points = np.random.uniform(low=b_min, high=b_max,size=(npoints, len(b_min)))
         elif method== "lhs":
-            sampler = qmc.LatinHypercube(self.dim, seed=seed)
+            sampler = qmc.LatinHypercube(len(b_min), seed=seed)
             sample = sampler.random(n=npoints)
             points = qmc.scale(sample, b_min, b_max)
         elif method== "sobol":
-            sampler = qmc.Sobol(self.dim, seed=seed)
+            sampler = qmc.Sobol(len(b_min), seed=seed)
             sample = sampler.random(n=npoints)
             points = qmc.scale(sample, b_min, b_max)
         else:
@@ -119,8 +120,8 @@ class Space(object):
         return points
 
     def sample(self, npoints: int, method="uniform", seed=None):
-        return self.sample_main(b_min=self.a_,b_max=self.b_,npoints=npoints,method=method,seed=seed)
+        return self.sample_main(dim = self.dim, b_min=self.a_,b_max=self.b_,npoints=npoints,method=method,seed=seed)
 
     def sample_scaled(self, npoints: int, method="uniform", seed=None):
-        return self.sample_main(b_min=self.sa_,b_max=self.sb_,npoints=npoints,method=method,seed=seed)
+        return self.sample_main(dim = self.dim, b_min=self.sa_,b_max=self.sb_,npoints=npoints,method=method,seed=seed)
 
