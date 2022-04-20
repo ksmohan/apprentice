@@ -298,35 +298,35 @@ class TestRationalApproximation(unittest.TestCase):
         C2 = sum([(y1-y2)**2 for (y1,y2) in zip(Y22_T_R,Y22_T)])
         assert(C2 < 1e-6)
 
-    # def test_from_interpolation_points_s31_unscaled_fsampl_lsampl(self):
-    #     scaled = False
-    #     (X,Y21,Y22) = TestRationalApproximation.get_data(scaled=scaled)
-    #     R = RationalApproximation.from_interpolation_points(X,Y22,
-    #                                                         m=2,
-    #                                                         n=2,
-    #                                                         fit_solver='ipopt',
-    #                                                         local_solver='ipopt',
-    #                                                         pnames=['x','y'],
-    #                                                         strategy="3.1")
-    #     (X_T,Y21_T,Y22_T) = TestRationalApproximation.get_test_data(scaled=scaled)
-    #     Y22_T_R = R.f_X(X_T)
-    #     C2 = sum([(y1-y2)**2 for (y1,y2) in zip(Y22_T_R,Y22_T)])
-    #     assert(C2 < 1e-6)
-    #
-    # def test_from_interpolation_points_s31_scaled_fsampl_lsampl(self):
-    #     scaled = True
-    #     (X,Y21,Y22) = TestRationalApproximation.get_data(scaled=scaled)
-    #     R = RationalApproximation.from_interpolation_points(X,Y22,
-    #                                                         m=2,
-    #                                                         n=2,
-    #                                                         fit_solver='ipopt',
-    #                                                         local_solver='ipopt',
-    #                                                         pnames=['x','y'],
-    #                                                         strategy="3.1")
-    #     (X_T,Y21_T,Y22_T) = TestRationalApproximation.get_test_data(scaled=scaled)
-    #     Y22_T_R = R.f_X(X_T)
-    #     C2 = sum([(y1-y2)**2 for (y1,y2) in zip(Y22_T_R,Y22_T)])
-    #     assert(C2 < 1e-6)
+    def test_from_interpolation_points_s31_unscaled_fsampl_lsampl(self):
+        scaled = False
+        (X,Y21,Y22) = TestRationalApproximation.get_data(scaled=scaled)
+        R = RationalApproximation.from_interpolation_points(X,Y22,
+                                                            m=2,
+                                                            n=2,
+                                                            fit_solver='ipopt',
+                                                            local_solver='ipopt',
+                                                            pnames=['x','y'],
+                                                            strategy="3.1")
+        (X_T,Y21_T,Y22_T) = TestRationalApproximation.get_test_data(scaled=scaled)
+        Y22_T_R = R.f_X(X_T)
+        C2 = sum([(y1-y2)**2 for (y1,y2) in zip(Y22_T_R,Y22_T)])
+        assert(C2 < 1e-6)
+
+    def test_from_interpolation_points_s31_scaled_fsampl_lsampl(self):
+        scaled = True
+        (X,Y21,Y22) = TestRationalApproximation.get_data(scaled=scaled)
+        R = RationalApproximation.from_interpolation_points(X,Y22,
+                                                            m=2,
+                                                            n=2,
+                                                            fit_solver='ipopt',
+                                                            local_solver='ipopt',
+                                                            pnames=['x','y'],
+                                                            strategy="3.1")
+        (X_T,Y21_T,Y22_T) = TestRationalApproximation.get_test_data(scaled=scaled)
+        Y22_T_R = R.f_X(X_T)
+        C2 = sum([(y1-y2)**2 for (y1,y2) in zip(Y22_T_R,Y22_T)])
+        assert(C2 < 1e-6)
 
     def test_save_and_from_file(self):
         scaled = True
