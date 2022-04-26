@@ -180,13 +180,13 @@ class RationalApproximation(SurrogateModel):
     @property
     def coeff_numerator(self):
         if hasattr(self, 'pcoeff_'):
-            return self.pcoeff_
+            return np.array(self.pcoeff_)
         raise Exception("Numerator coeffecients cannot be found. Perform a fit first")
 
     @property
     def coeff_denominator(self):
         if hasattr(self, 'qcoeff_'):
-            return self.qcoeff_
+            return np.array(self.qcoeff_)
         raise Exception("Denominator coeffecients cannot be found. Perform a fit first")
 
     def set_structures(self):

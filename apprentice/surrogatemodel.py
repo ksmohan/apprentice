@@ -34,11 +34,11 @@ class SurrogateModel(object):
         return SM
 
     @classmethod
-    def from_data_structure(cls,data_structure):
+    def from_data_structure(cls,data_structure,**kwargs):
         raise Exception("The function objective must be implemented in the derived class")
 
     @classmethod
-    def from_file(cls,filepath):
+    def from_file(cls,filepath,**kwargs):
         raise Exception("The function objective must be implemented in the derived class")
 
     def fit(self,X,Y):
